@@ -1,0 +1,99 @@
+<div class="lightbox-overlay" *ngIf="lightbox.isOpen()">
+  <!-- Top Bar -->
+  <div class="lightbox-header">
+    <div class="header-left">
+      <span class="sheet-indicator" *ngIf="lightbox.currentSpread()" [innerHTML]="scopeIndicator"></span>
+      <h3 class="sheet-title">{{ currentTitle }}</h3>
+    </div>
+
+    <!-- Zoom & Utility Controls -->
+    <div class="header-controls">
+      <div class="zoom-group">
+        <button class="ctrl-btn" (click)="lightbox.zoomOut()" title="Zoom Out (-)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <span class="zoom-value">{{ (lightbox.zoom() * 100) | number:'1.0-0' }}%</span>
+        <button class="ctrl-btn" (click)="lightbox.zoomIn()" title="Zoom In (+)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn reset-btn" (click)="lightbox.resetZoom()" title="Reset Zoom">
+          1:1
+        </button>
+      </div>
+
+      <button 
+        class="ctrl-btn toggle-info" 
+        [class.active]="lightbox.infoOpen()" 
+        (click)="lightbox.toggleInfo()" 
+        title="Toggle Drawing Specifications"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+      </button>
+
+      <button class="ctrl-btn close-btn" (click)="lightbox.close()" title="Close Viewer (Esc)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Stage Area with Image Pan/Zoom -->
+  <div class="lightbox-stage" (click)="lightbox.close()">
+    <!-- Navigation Buttons -->
+    <button 
+      class="nav-arrow nav-prev" 
+      *ngIf="lightbox.currentSpread()" 
+      (click)="$event.stopPropagation(); lightbox.prev()" 
+      title="Previous Sheet"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+
+    <div class="image-wrapper" (click)="$event.stopPropagation()">
+      <img 
+        [src]="currentImageUrl" 
+        [alt]="currentTitle"
+        class="lightbox-img"
+        [style.transform]="'scale(' + lightbox.zoom() + ')'"
+      />
+    </div>
+
+    <button 
+      class="nav-arrow nav-next" 
+      *ngIf="lightbox.currentSpread()" 
+      (click)="$event.stopPropagation(); lightbox.next()" 
+      title="Next Sheet"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Bottom Drawer / Sheet Specifications -->
+  <div class="lightbox-drawer" *ngIf="lightbox.infoOpen()" (click)="$event.stopPropagation()">
+    <div class="drawer-header">
+      <div class="drawer-tag" [innerHTML]="currentSubtitle"></div>
+      <div class="drawer-meta" *ngIf="lightbox.currentSpread()">
+        <span>DIMENSIONS: 4960 &times; 3507 (300 DPI A3 LANDSCAPE)</span>
+      </div>
+    </div>
+    <p class="drawer-desc" *ngIf="currentDescription">{{ currentDescription }}</p>
+    <div class="drawer-tags" *ngIf="currentTags.length > 0">
+      <span class="tag-pill" *ngFor="let tag of currentTags">{{ tag }}</span>
+    </div>
+  </div>
+</div>

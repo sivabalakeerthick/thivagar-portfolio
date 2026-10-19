@@ -1,0 +1,225 @@
+<header class="studio-nav" [class.is-scrolled]="scrolled">
+  <!-- Precision Architectural Scroll Progress Hairline -->
+  <div class="scroll-progress-bar" [style.width.%]="scrollProgress()" title="Viewport Scroll: {{ scrollProgress() }}%"></div>
+
+  <div class="nav-container">
+    <!-- Brand / Architect Identity -->
+    <a routerLink="/" class="brand-link" (click)="closeMobileMenu()">
+      <div class="brand-monogram">
+        <span class="mono-initials">SM</span>
+      </div>
+      <div class="brand-text">
+        <span class="architect-name">THIVAGAR S.M</span>
+        <span class="architect-role">ARCHITECT &bull; B.ARCH</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation Links with Live Scroll-Spy & Route Highlighting -->
+    <nav class="desktop-nav">
+      <button 
+        class="nav-item" 
+        [class.active]="isSectionActive('projects')" 
+        (click)="navigateToSection('projects')"
+        title="View Selected Architectural Projects"
+      >
+        <span class="nav-num">01</span>
+        <span class="nav-label">Projects</span>
+        <span class="active-dot" *ngIf="isSectionActive('projects')"></span>
+      </button>
+
+      <button 
+        class="nav-item" 
+        [class.active]="isSectionActive('monograph')" 
+        (click)="navigateToSection('monograph')"
+        title="Inspect 64-Page Architectural Monograph"
+      >
+        <span class="nav-num">02</span>
+        <span class="nav-label">Monograph</span>
+        <span class="active-dot" *ngIf="isSectionActive('monograph')"></span>
+      </button>
+
+      <button 
+        class="nav-item" 
+        [class.active]="isSectionActive('about')" 
+        (click)="navigateToSection('about')"
+        title="Architectural Background & Pedagogy"
+      >
+        <span class="nav-num">03</span>
+        <span class="nav-label">Profile</span>
+        <span class="active-dot" *ngIf="isSectionActive('about')"></span>
+      </button>
+
+      <button 
+        class="nav-item" 
+        [class.active]="isSectionActive('skills')" 
+        (click)="navigateToSection('skills')"
+        title="Software & Technical Drafting Competencies"
+      >
+        <span class="nav-num">04</span>
+        <span class="nav-label">Skills</span>
+        <span class="active-dot" *ngIf="isSectionActive('skills')"></span>
+      </button>
+
+      <button 
+        class="nav-item" 
+        [class.active]="isSectionActive('contact')" 
+        (click)="navigateToSection('contact')"
+        title="Transmit Professional Inquiries"
+      >
+        <span class="nav-num">05</span>
+        <span class="nav-label">Contact</span>
+        <span class="active-dot" *ngIf="isSectionActive('contact')"></span>
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <!-- Architectural Theme Switcher (Obsidian Studio vs Drafting Blueprint) -->
+      <button 
+        class="theme-toggle-btn" 
+        (click)="portfolioService.toggleTheme()" 
+        [title]="portfolioService.theme() === 'obsidian' ? 'Switch to Technical Blueprint Theme' : 'Switch to Studio Obsidian Theme'"
+        type="button"
+        aria-label="Toggle Architectural Theme"
+      >
+        <span class="theme-icon">
+          <!-- Blueprint Drafting Grid/Compass Icon -->
+          <svg *ngIf="portfolioService.theme() === 'obsidian'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9"/>
+            <line x1="12" y1="3" x2="12" y2="21"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <!-- Studio Obsidian Reticle Icon -->
+          <svg *ngIf="portfolioService.theme() === 'blueprint'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="4"/>
+            <line x1="12" y1="20" x2="12" y2="23"/>
+            <line x1="1" y1="12" x2="4" y2="12"/>
+            <line x1="20" y1="12" x2="23" y2="12"/>
+          </svg>
+        </span>
+        <span class="theme-mode-text">{{ portfolioService.theme() === 'obsidian' ? 'BLUEPRINT' : 'OBSIDIAN' }}</span>
+      </button>
+
+
+
+      <!-- Resume Download -->
+      <a 
+        href="assets/docs/Thivagar_SM_Resume.pdf" 
+        download="Thivagar_SM_Resume.pdf" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="resume-cta-btn"
+        title="Download Formal Architectural Resume"
+      >
+        <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>CV / Resume</span>
+      </a>
+
+      <!-- Mobile Hamburger Button -->
+      <button 
+        class="mobile-toggle" 
+        [class.is-open]="mobileMenuOpen" 
+        (click)="toggleMobileMenu()" 
+        aria-label="Toggle Navigation Menu"
+      >
+        <span class="bar bar-1"></span>
+        <span class="bar bar-2"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-drawer" [class.is-active]="mobileMenuOpen">
+    <div class="drawer-backdrop" (click)="closeMobileMenu()"></div>
+    <div class="drawer-panel">
+      <div class="drawer-header-row">
+        <div class="drawer-meta">
+          <span class="meta-label">NAVIGATIONS</span>
+        </div>
+        <button 
+          class="drawer-close-btn" 
+          (click)="closeMobileMenu()" 
+          aria-label="Close navigation menu" 
+          title="Close Navigation Menu"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="drawer-nav">
+        <button class="drawer-item" [class.active]="isSectionActive('projects')" (click)="navigateToSection('projects')">
+          <span class="drawer-num">01</span>
+          <span class="drawer-text">Projects</span>
+          <span class="drawer-active-dot" *ngIf="isSectionActive('projects')"></span>
+        </button>
+
+        <button class="drawer-item" [class.active]="isSectionActive('monograph')" (click)="navigateToSection('monograph')">
+          <span class="drawer-num">02</span>
+          <span class="drawer-text">Monograph</span>
+          <span class="drawer-active-dot" *ngIf="isSectionActive('monograph')"></span>
+        </button>
+
+        <button class="drawer-item" [class.active]="isSectionActive('about')" (click)="navigateToSection('about')">
+          <span class="drawer-num">03</span>
+          <span class="drawer-text">Profile</span>
+          <span class="drawer-active-dot" *ngIf="isSectionActive('about')"></span>
+        </button>
+
+        <button class="drawer-item" [class.active]="isSectionActive('skills')" (click)="navigateToSection('skills')">
+          <span class="drawer-num">04</span>
+          <span class="drawer-text">Skills</span>
+          <span class="drawer-active-dot" *ngIf="isSectionActive('skills')"></span>
+        </button>
+
+        <button class="drawer-item" [class.active]="isSectionActive('contact')" (click)="navigateToSection('contact')">
+          <span class="drawer-num">05</span>
+          <span class="drawer-text">Contact</span>
+          <span class="drawer-active-dot" *ngIf="isSectionActive('contact')"></span>
+        </button>
+      </nav>
+
+      <div class="drawer-footer">
+        <button 
+          class="theme-toggle-btn drawer-theme-btn" 
+          (click)="portfolioService.toggleTheme()" 
+          type="button"
+        >
+          <span class="theme-icon">
+            <svg *ngIf="portfolioService.theme() === 'obsidian'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9"/>
+              <line x1="12" y1="3" x2="12" y2="21"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+            </svg>
+            <svg *ngIf="portfolioService.theme() === 'blueprint'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="4"/>
+              <line x1="12" y1="20" x2="12" y2="23"/>
+            </svg>
+          </span>
+          <span>THEME: {{ portfolioService.theme() === 'obsidian' ? 'SWITCH TO BLUEPRINT' : 'SWITCH TO OBSIDIAN' }}</span>
+        </button>
+
+
+
+        <a 
+          href="assets/docs/Thivagar_SM_Resume.pdf" 
+          download 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="btn btn-primary drawer-cv-btn"
+        >
+          Download Formal Resume (PDF)
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

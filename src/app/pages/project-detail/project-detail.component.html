@@ -1,0 +1,264 @@
+<div class="project-detail-page" *ngIf="project(); else notFound">
+  <!-- Project Top Banner / Breadcrumbs -->
+  <div class="project-topbar container">
+    <div class="topbar-left">
+      <a routerLink="/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        <span>All Architecture Projects</span>
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="current-crumb">{{ project()?.title }}</span>
+    </div>
+
+    <div class="topbar-right">
+      <span class="sheet-count-badge">
+        <strong>{{ projectSpreads().length }}</strong> ARCHITECTURAL SHEETS
+      </span>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="project-hero container">
+    <div class="hero-header">
+      <div class="hero-tag-row">
+        <span class="category-tag">{{ project()?.category }}</span>
+        <span class="typology-tag" *ngIf="project()?.typology">{{ project()?.typology }}</span>
+        <span class="custom-badge" *ngIf="project()?.isCustom">Custom Added</span>
+      </div>
+      <h1 class="project-title">{{ project()?.title }}</h1>
+      <p class="project-subtitle" *ngIf="project()?.subtitle">{{ project()?.subtitle }}</p>
+    </div>
+
+    <!-- Metadata Grid -->
+    <div class="meta-strip">
+      <div class="meta-item">
+        <span class="meta-label">LOCATION</span>
+        <span class="meta-val">{{ project()?.location }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">SITE AREA</span>
+        <span class="meta-val">{{ project()?.siteArea }}</span>
+      </div>
+      <div class="meta-item" *ngIf="project()?.builtUpArea">
+        <span class="meta-label">BUILT-UP AREA</span>
+        <span class="meta-val">{{ project()?.builtUpArea }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">TIMELINE / STAGE</span>
+        <span class="meta-val">{{ project()?.year || project()?.period || '2021-2026' }}</span>
+      </div>
+      <div class="meta-item" *ngIf="project()?.software">
+        <span class="meta-label">TOOLS UTILIZED</span>
+        <span class="meta-val">{{ project()?.software }}</span>
+      </div>
+    </div>
+
+    <!-- Statement & Highlights -->
+    <div class="narrative-grid">
+      <div class="narrative-left">
+        <h3 class="narrative-heading">DESIGN CONCEPT &amp; ARCHITECTURAL INTENT</h3>
+        <p class="narrative-text">{{ project()?.statement }}</p>
+      </div>
+
+      <div class="narrative-right" *ngIf="project()?.highlights && project()!.highlights!.length > 0">
+        <h4 class="highlights-heading">KEY STRATEGIES &amp; HIGHLIGHTS</h4>
+        <div class="highlights-list">
+          <div class="highlight-item" *ngFor="let h of project()?.highlights">
+            <span class="hl-marker">&bull;</span>
+            <span class="hl-text">{{ h }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-components if available (e.g. Mixed-Use blocks) -->
+    <div class="subcomponents-box" *ngIf="project()?.subComponents && project()!.subComponents!.length > 0">
+      <h4 class="sub-title">PROGRAMMATIC PHASING &amp; COMPONENTS</h4>
+      <div class="sub-grid">
+        <div class="sub-card" *ngFor="let sub of project()?.subComponents">
+          <div class="sub-header">
+            <span class="sub-name">{{ sub.name }}</span>
+            <span class="sub-role">{{ sub.role }}</span>
+          </div>
+          <p class="sub-desc">{{ sub.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Drawings & Images Gallery Section -->
+  <section class="gallery-section container">
+    <div class="gallery-controls">
+      <!-- Filter Tabs -->
+      <div class="filter-tabs">
+        <button 
+          *ngFor="let type of drawingTypes()" 
+          class="tab-btn" 
+          [class.active]="selectedDrawingType() === type"
+          (click)="selectType(type)"
+        >
+          <span>{{ type }}</span>
+        </button>
+      </div>
+
+      <!-- View Switcher -->
+      <div class="view-switch">
+        <button 
+          class="switch-btn" 
+          [class.active]="viewMode() === 'grid'" 
+          (click)="toggleViewMode('grid')"
+          title="Grid View"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </button>
+        <button 
+          class="switch-btn" 
+          [class.active]="viewMode() === 'editorial'" 
+          (click)="toggleViewMode('editorial')"
+          title="Editorial Presentation View"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-gallery" *ngIf="filteredDrawings().length === 0">
+      <p>No drawings found matching "{{ selectedDrawingType() }}".</p>
+      <button class="btn btn-secondary btn-sm" (click)="selectType('All')">Show All Project Drawings</button>
+    </div>
+
+    <!-- Grid View Mode -->
+    <div class="drawings-grid" *ngIf="viewMode() === 'grid' && filteredDrawings().length > 0">
+      <div 
+        class="drawing-card" 
+        *ngFor="let s of filteredDrawings()" 
+        (click)="openSheet(s)"
+      >
+        <div class="card-thumb-wrap">
+          <img 
+            [src]="s.mediumImage || s.fullImage" 
+            [alt]="s.title" 
+            loading="lazy" 
+            class="card-img"
+          />
+          <div class="card-overlay">
+            <span class="inspect-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <line x1="11" y1="8" x2="11" y2="14"/>
+                <line x1="8" y1="11" x2="14" y2="11"/>
+              </svg>
+              Inspect Sheet #{{ s.page }}
+            </span>
+          </div>
+          <span class="sheet-badge">Sheet {{ s.page }}</span>
+          <span class="type-badge">{{ s.type }}</span>
+        </div>
+
+        <div class="card-info">
+          <h4 class="card-title">{{ s.title }}</h4>
+          <p class="card-desc" *ngIf="s.description">{{ s.description }}</p>
+          <div class="card-tags" *ngIf="s.tags && s.tags.length > 0">
+            <span class="tag" *ngFor="let t of s.tags">{{ t }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Editorial View Mode (Large Sheet Flow) -->
+    <div class="editorial-flow" *ngIf="viewMode() === 'editorial' && filteredDrawings().length > 0">
+      <div 
+        class="editorial-sheet" 
+        *ngFor="let s of filteredDrawings()"
+      >
+        <div class="sheet-hero-image" (click)="openSheet(s)">
+          <img 
+            [src]="s.fullImage || s.mediumImage" 
+            [alt]="s.title" 
+            loading="lazy" 
+            class="flow-img"
+          />
+          <div class="flow-overlay">
+            <span>Click to Open Fullscreen Lightbox &bull; Sheet {{ s.page }}</span>
+          </div>
+        </div>
+
+        <div class="sheet-editorial-caption">
+          <div class="caption-left">
+            <span class="sheet-number-pill">SHEET {{ s.page }} / {{ portfolioService.spreads().length }}</span>
+            <span class="sheet-type-pill">{{ s.type }}</span>
+          </div>
+          <div class="caption-center">
+            <h3 class="sheet-full-title">{{ s.title }}</h3>
+            <p class="sheet-full-desc">{{ s.description }}</p>
+          </div>
+          <div class="caption-right">
+            <button class="btn btn-secondary btn-sm" (click)="openSheet(s)">
+              Inspect Sheet
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Navigation Footer (Prev / Next) -->
+  <section class="project-nav-footer container">
+    <div class="nav-footer-inner">
+      <a 
+        *ngIf="prevProject()" 
+        [routerLink]="['/project', prevProject()?.id]" 
+        class="proj-nav-card prev-card"
+      >
+        <span class="proj-nav-dir">&larr; PREVIOUS PROJECT</span>
+        <span class="proj-nav-name">{{ prevProject()?.title }}</span>
+        <span class="proj-nav-cat">{{ prevProject()?.category }}</span>
+      </a>
+      <div class="nav-placeholder" *ngIf="!prevProject()"></div>
+
+      <a routerLink="/" class="all-projects-center-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        <span>All Projects</span>
+      </a>
+
+      <a 
+        *ngIf="nextProject()" 
+        [routerLink]="['/project', nextProject()?.id]" 
+        class="proj-nav-card next-card"
+      >
+        <span class="proj-nav-dir">NEXT PROJECT &rarr;</span>
+        <span class="proj-nav-name">{{ nextProject()?.title }}</span>
+        <span class="proj-nav-cat">{{ nextProject()?.category }}</span>
+      </a>
+      <div class="nav-placeholder" *ngIf="!nextProject()"></div>
+    </div>
+  </section>
+</div>
+
+<!-- Fallback Not Found -->
+<ng-template #notFound>
+  <div class="container not-found-state">
+    <h2>Project Not Found</h2>
+    <p>The architectural project you requested does not exist or has been modified.</p>
+    <a routerLink="/" class="btn btn-primary">Return to Portfolio Overview</a>
+  </div>
+</ng-template>
