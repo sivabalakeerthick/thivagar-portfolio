@@ -247,7 +247,7 @@
       <!-- Spread Image Display Area -->
       <div class="stage-viewport" (click)="openCurrentBookLightbox()">
         <img 
-          [src]="currentBookSpread().fullImage || currentBookSpread().mediumImage" 
+          [src]="currentBookSpread().mediumImage || currentBookSpread().fullImage" 
           [alt]="currentBookSpread().title"
           class="stage-img"
         />

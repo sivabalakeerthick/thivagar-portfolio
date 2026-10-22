@@ -34,14 +34,11 @@ export class App implements OnInit {
       `%c Engineered & Architected by Siva Bala Keerthick %c\n\n` +
       `%cClient:  THIVAGAR S.M -Architect(B.Arch)\n` +
       `Engine:                  Angular 22 (Standalone + Signals)\n` +
-      `Portfolio:               %chttps://portfolio-sivabalakeerthick.web.app/\n` +
-      `%cInquiries & Commissions: %csivabalakeerthick@gmail.com `,
+      `Portfolio:               %chttps://sivabalakeerthick.web.app/`,
       titleStyle,
       '',
       subStyle,
       '',
-      textStyle,
-      linkStyle,
       textStyle,
       linkStyle
     );

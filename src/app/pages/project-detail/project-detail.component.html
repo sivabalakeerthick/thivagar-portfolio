@@ -187,7 +187,7 @@
       >
         <div class="sheet-hero-image" (click)="openSheet(s)">
           <img 
-            [src]="s.fullImage || s.mediumImage" 
+            [src]="s.mediumImage || s.fullImage" 
             [alt]="s.title" 
             loading="lazy" 
             class="flow-img"
